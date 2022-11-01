@@ -21,6 +21,7 @@
 #include "includes/define.h"
 #include "includes/model_part.h"
 #include "includes/global_variables.h"
+#include "utilities/distance.h"
 
 namespace Kratos
 {
@@ -165,7 +166,7 @@ private:
     bool NodeIsCloseEnough(const Node<3>& rNode,
                            const Point& rThePoint,
                            const Globals::Configuration configuration,
-                           const double DistanceThreshold) const;
+                           const Distance DistanceThreshold) const;
 
     ///@}
 

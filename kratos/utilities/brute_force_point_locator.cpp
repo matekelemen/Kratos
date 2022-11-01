@@ -33,8 +33,9 @@ int BruteForcePointLocator::FindNode(const Point& rThePoint,
     KRATOS_WARNING_IF("BruteForcePointLocator", global_num_nodes == 0) << r_data_comm << "No Nodes in ModelPart \"" << mrModelPart.Name() << std::endl;
 
     // note that this cannot be omp bcs breaking is not allowed in omp
+    const auto distance = Distance::FromDistance(DistanceThreshold);
     for (auto& r_node : mrModelPart.GetCommunicator().LocalMesh().Nodes()) {
-        const bool is_close_enough = NodeIsCloseEnough(r_node, rThePoint, configuration, DistanceThreshold);
+        const bool is_close_enough = NodeIsCloseEnough(r_node, rThePoint, configuration, distance);
         if (is_close_enough) {
             local_node_found = 1;
             found_node_id = r_node.Id();
@@ -152,7 +153,7 @@ void BruteForcePointLocator::CheckResults(const std::string& rObjectName,
 bool BruteForcePointLocator::NodeIsCloseEnough(const Node<3>& rNode,
                                                const Point& rThePoint,
                                                const Globals::Configuration configuration,
-                                               const double DistanceThreshold) const
+                                               const Distance DistanceThreshold) const
 {
     // Select initial or current position
     const Point* p_position = &rNode;
@@ -160,11 +161,13 @@ bool BruteForcePointLocator::NodeIsCloseEnough(const Node<3>& rNode,
         p_position = &rNode.GetInitialPosition();
 
     // Check distance
-    const double distance = std::sqrt( std::pow(p_position->X() - rThePoint.X(),2)
-                                     + std::pow(p_position->Y() - rThePoint.Y(),2)
-                                     + std::pow(p_position->Z() - rThePoint.Z(),2) );
+    const auto distance = Distance::FromSquaredDistance(
+        std::pow(p_position->X() - rThePoint.X(),2)
+        + std::pow(p_position->Y() - rThePoint.Y(),2)
+        + std::pow(p_position->Z() - rThePoint.Z(),2)
+    );
 
-    return (distance < DistanceThreshold);
+    return distance < DistanceThreshold;
 }
 
 }  // namespace Kratos.
