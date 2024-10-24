@@ -199,6 +199,24 @@ public:
         return mData[i];
     }
 
+    /**
+     * @brief Equality comparison operator to check if two @å GlobalPointersVector objects are equal.
+     * @details This function checks if the sizes are equal and then compares the elements using @a operator==.
+     * @param rRhs The GlobalPointersVector to compare with.
+     * @return True if the containers have identical sizes and store identical items in the exact same order.
+     */
+    bool operator==(const GlobalPointersVector& rRhs) const noexcept
+    {
+        return this->size() == rRhs.size() && std::equal(
+            mData.begin(),
+            mData.end(),
+            rRhs.begin(),
+            [](const data_type& rLhs, const data_type& rRhs) -> bool {
+                return rLhs == rRhs;
+            }
+        );
+    }
+
     ///@}
     ///@name Operations
     ///@{

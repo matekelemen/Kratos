@@ -154,6 +154,18 @@ public:
         return mData[i];
     }
 
+    bool operator==(const PointerVector& rRhs) const noexcept
+    {
+        return this->size() == rRhs.size() && std::equal(
+            mData.begin(),
+            mData.end(),
+            rRhs.begin(),
+            [](const data_type& rLhs, const data_type& rRhs) -> bool {
+                return rLhs == rRhs;
+            }
+        );
+    }
+
     ///@}
     ///@name Operations
     ///@{
